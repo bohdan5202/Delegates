@@ -20,6 +20,10 @@ namespace lab4
     /// </summary>
     public partial class MainWindow : Window
     {
+        delegate double MathOperation();
+        static double Square(double a) => a * a;
+        static double SquareRoot(double a) => Math.Sqrt(a);
+        static double Reciprocal(double a) => 1 / a;
 
 
         public MainWindow()
