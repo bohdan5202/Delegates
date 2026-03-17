@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <ComboBox x:Name="OperationBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="157" Margin="44,33,0,0" SelectionChanged="ComboBox_SelectionChanged" >
+            <ComboBoxItem Content="Square"/>
+            <ComboBoxItem Content="Square Root"/>
+            <ComboBoxItem Content="Reciprocal"/>
+        </ComboBox>
+
+        <TextBlock x:Name="ResultText" Margin="241,33,32.6,365" RenderTransformOrigin="0.5,0.5"/>
     </Grid>
 </Window>
