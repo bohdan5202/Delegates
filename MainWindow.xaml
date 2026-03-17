@@ -132,6 +132,25 @@
                         <ComboBoxItem Content="Blue"/>
                         <ComboBoxItem Content="Green"/>
                     </ComboBox>
+                    <!-- Sorting (delegate-based comparer) -->
+                    <Separator Margin="0,14,0,10"/>
+                    <TextBlock FontWeight="SemiBold" Text="Sorting"/>
+
+                    <StackPanel Margin="0,6,0,0">
+                        <RadioButton x:Name="AscRadio"
+                         Content="Ascending"
+                         GroupName="SortOrder"
+                         IsChecked="True"/>
+                        <RadioButton x:Name="DescRadio"
+                         Content="Descending"
+                         GroupName="SortOrder"
+                         Margin="0,6,0,0"/>
+                    </StackPanel>
+
+                    <Button Content="Sort Input"
+                        Margin="0,10,0,0"
+                        Height="30"
+                        Click="SortInputButton_Click"/>
                 </StackPanel>
 
                 <!-- Foreground picker + size slider -->
@@ -158,7 +177,9 @@
                         <Button Content="Reset UI" Width="100" Height="30" Margin="10,0,0,0" Click="ResetUiButton_Click"/>
                     </StackPanel>
                 </StackPanel>
+                
             </Grid>
+            
         </Border>
     </Grid>
 </Window>

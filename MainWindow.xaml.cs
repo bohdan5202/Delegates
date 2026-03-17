@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -12,9 +13,26 @@ namespace lab4
     {
         delegate double MathOperation(double a);
 
+        delegate bool Comparer(double a, double b);
+
         static double Square(double a) => a * a;
         static double SquareRoot(double a) => Math.Sqrt(a);
         static double Reciprocal(double a) => 1 / a;
+
+        private static void BubbleSort(double[] arr, Comparer compare)
+        {
+            for (int i = 0; i < arr.Length - 1; i++)
+                for (int j = 0; j < arr.Length - i - 1; j++)
+                    if (compare(arr[j], arr[j + 1]))
+                    {
+                        double temp = arr[j];
+                        arr[j] = arr[j + 1];
+                        arr[j + 1] = temp;
+                    }
+        }
+
+        private bool AscendingComparer(double a, double b) => a > b;
+        private bool DescendingComparer(double a, double b) => a < b;
 
         private MathOperation operation;
 
@@ -44,6 +62,28 @@ namespace lab4
             };
 
             ResultText.Text = "Ready.";
+        }
+
+        private void SortInputButton_Click(object sender, RoutedEventArgs e)
+        {
+            OutputTextBox.Clear();
+
+            if (!TryParseDoubles(InputTextBox.Text, out var values, out var error))
+            {
+                ResultText.Text = error;
+                return;
+            }
+
+            var arr = values.ToArray();
+
+            Comparer comparer = (AscRadio.IsChecked == true)
+                ? new Comparer(AscendingComparer)
+                : new Comparer(DescendingComparer);
+
+            BubbleSort(arr, comparer);
+
+            OutputTextBox.Text = string.Join(Environment.NewLine, arr.Select(v => v.ToString("G", CultureInfo.InvariantCulture)));
+            ResultText.Text = (AscRadio.IsChecked == true) ? "Sorted ascending." : "Sorted descending.";
         }
 
         private void CaptureDefaultUi()
