@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace lab4
 {
@@ -17,13 +18,144 @@ namespace lab4
 
         private MathOperation operation;
 
+        // Multicast delegate for UI styling
+        private delegate void UiStyleAction();
+        private UiStyleAction uiStyleMulticast;
+
+        // Defaults for reset
+        private Brush defaultWindowBackground;
+        private Brush defaultResultForeground;
+        private double defaultResultFontSize;
+
         public MainWindow()
         {
             InitializeComponent();
-            ResultText.Text = "Choose an operation to begin.";
+
+            CaptureDefaultUi();
+
+            // initial build (based on default checked boxes)
+            BuildUiStyleMulticast();
+
+            // slider label update
+            FontSizeSlider.ValueChanged += (s, e) =>
+            {
+                if (FontSizeValueText != null)
+                    FontSizeValueText.Text = "Selected size: " + ((int)FontSizeSlider.Value).ToString(CultureInfo.InvariantCulture);
+            };
+
+            ResultText.Text = "Ready.";
         }
 
-        // Required: method that accepts a delegate as a parameter to process the collection
+        private void CaptureDefaultUi()
+        {
+            defaultWindowBackground = Background;
+            defaultResultForeground = ResultText.Foreground;
+            defaultResultFontSize = ResultText.FontSize;
+        }
+
+        private void ResetUiToDefaults()
+        {
+            Background = defaultWindowBackground;
+            ResultText.Foreground = defaultResultForeground;
+            ResultText.FontSize = defaultResultFontSize;
+        }
+
+        // Build multicast delegate based on what the user checked
+        private void BuildUiStyleMulticast()
+        {
+            uiStyleMulticast = null;
+
+            if (BgMethodCheckBox.IsChecked == true)
+                uiStyleMulticast += ChangeBackgroundColor;
+
+            if (FgMethodCheckBox.IsChecked == true)
+                uiStyleMulticast += ChangeFontColor;
+
+            if (SizeMethodCheckBox.IsChecked == true)
+                uiStyleMulticast += ChangeLabelFontSize;
+        }
+
+        // --- Styling methods (targets required by the assignment) ---
+
+        private void ChangeBackgroundColor()
+        {
+            var selected = GetSelectedComboText(BackgroundColorBox);
+
+            switch (selected)
+            {
+                case "Light":
+                    Background = Brushes.WhiteSmoke;
+                    break;
+                case "Blue":
+                    Background = new SolidColorBrush(Color.FromRgb(25, 50, 120));
+                    break;
+                case "Green":
+                    Background = new SolidColorBrush(Color.FromRgb(20, 90, 60));
+                    break;
+                case "Dark":
+                default:
+                    Background = new SolidColorBrush(Color.FromRgb(30, 30, 38));
+                    break;
+            }
+        }
+
+        private void ChangeFontColor()
+        {
+            var selected = GetSelectedComboText(FontColorBox);
+
+            switch (selected)
+            {
+                case "White":
+                    ResultText.Foreground = Brushes.White;
+                    break;
+                case "Black":
+                    ResultText.Foreground = Brushes.Black;
+                    break;
+                case "Red":
+                    ResultText.Foreground = Brushes.Red;
+                    break;
+                case "Orange":
+                default:
+                    ResultText.Foreground = Brushes.Orange;
+                    break;
+            }
+        }
+
+        private void ChangeLabelFontSize()
+        {
+            ResultText.FontSize = FontSizeSlider.Value;
+        }
+
+        private static string GetSelectedComboText(ComboBox box)
+        {
+            var item = box.SelectedItem as ComboBoxItem;
+            return item?.Content?.ToString() ?? string.Empty;
+        }
+
+        // --- UI events for multicast demo ---
+
+        private void BuildMulticastButton_Click(object sender, RoutedEventArgs e)
+        {
+            BuildUiStyleMulticast();
+
+            var count = uiStyleMulticast?.GetInvocationList().Length ?? 0;
+            ResultText.Text = "Multicast built. Methods in list: " + count.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void InvokeMulticastButton_Click(object sender, RoutedEventArgs e)
+        {
+            uiStyleMulticast?.Invoke();
+            ResultText.Text = "Multicast invoked (all selected style methods executed).";
+        }
+
+        private void ResetUiButton_Click(object sender, RoutedEventArgs e)
+        {
+            ResetUiToDefaults();
+            ResultText.Text = "UI reset to defaults.";
+        }
+
+        // ---------------- Existing collection processing code ----------------
+
         private static List<double> ProcessCollection(IEnumerable<double> values, MathOperation op)
         {
             if (values == null) throw new ArgumentNullException(nameof(values));
@@ -91,8 +223,6 @@ namespace lab4
             try
             {
                 var results = ProcessCollection(values, operation);
-
-                // show one value per line for easy validation
                 OutputTextBox.Text = string.Join(Environment.NewLine, results.Select(r => r.ToString("G", CultureInfo.InvariantCulture)));
                 ResultText.Text = $"Processed {results.Count} value(s).";
             }
@@ -117,7 +247,6 @@ namespace lab4
 
             foreach (var p in parts)
             {
-                // InvariantCulture makes parsing consistent (dot decimal)
                 if (!double.TryParse(p, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var v))
                 {
                     error = "Invalid number in list: " + p;
@@ -147,12 +276,6 @@ namespace lab4
             InputTextBox.Clear();
             OutputTextBox.Clear();
             ResultText.Text = "Cleared.";
-        }
-
-        // Keep your old single-value handler if it’s still wired anywhere (safe to leave)
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            ResultText.Text = "Use 'Process Collection' for the collection requirement.";
         }
     }
 }

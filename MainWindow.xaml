@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:lab4"
         mc:Ignorable="d"
-        Title="Collection Processing" Height="520" Width="860"
+        Title="Collection Processing" Height="712" Width="1106"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -14,6 +14,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="12"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="12"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -42,7 +43,7 @@
                              AcceptsReturn="True"
                              VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Auto"
-                             Height="180"
+                             Height="106"
                              TextWrapping="Wrap"/>
                 </StackPanel>
 
@@ -96,12 +97,68 @@
                 <TextBlock x:Name="ResultText"
                            Grid.Row="3"
                            Margin="0,10,0,0"
-                           Foreground="#333"/>
+                           Foreground="#333"
+                           Text="(status)"/>
             </Grid>
         </Border>
 
-        <!-- Footer -->
-        <TextBlock Grid.Row="5" Margin="0,10,0,0" Foreground="#666"
-                   Text="Tip: Square Root rejects negative inputs; Reciprocal rejects zero."/>
+        <!-- Multicast Delegate UI Styling Test -->
+        <Border Grid.Row="6" Padding="12" BorderBrush="#DDD" BorderThickness="1" CornerRadius="6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="1.6*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Choose which methods are in the multicast list -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock FontWeight="SemiBold" Text="UI Styling Test (Multicast Delegate)"/>
+                    <TextBlock Foreground="#666" Margin="0,2,0,10"
+                               Text="Select methods to include, then build + invoke."/>
+                    <CheckBox x:Name="BgMethodCheckBox" Content="Change background color" IsChecked="True"/>
+                    <CheckBox x:Name="FgMethodCheckBox" Content="Change label (ResultText) font color" IsChecked="True" Margin="0,6,0,0"/>
+                    <CheckBox x:Name="SizeMethodCheckBox" Content="Change label (ResultText) font size" IsChecked="True" Margin="0,6,0,0"/>
+                </StackPanel>
+
+                <!-- Background picker -->
+                <StackPanel Grid.Column="2">
+                    <TextBlock FontWeight="SemiBold" Text="Background color"/>
+                    <ComboBox x:Name="BackgroundColorBox" Margin="0,6,0,0" SelectedIndex="0">
+                        <ComboBoxItem Content="Dark"/>
+                        <ComboBoxItem Content="Light"/>
+                        <ComboBoxItem Content="Blue"/>
+                        <ComboBoxItem Content="Green"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Foreground picker + size slider -->
+                <StackPanel Grid.Column="4">
+                    <TextBlock FontWeight="SemiBold" Text="Label style (ResultText)"/>
+                    <TextBlock Margin="0,6,0,0" Text="Font color"/>
+                    <ComboBox x:Name="FontColorBox" Margin="0,6,0,0" SelectedIndex="0">
+                        <ComboBoxItem Content="Orange"/>
+                        <ComboBoxItem Content="White"/>
+                        <ComboBoxItem Content="Black"/>
+                        <ComboBoxItem Content="Red"/>
+                    </ComboBox>
+
+                    <TextBlock Margin="0,10,0,0" Text="Font size"/>
+                    <Slider x:Name="FontSizeSlider" Minimum="10" Maximum="40" Value="22"
+                            TickFrequency="2" IsSnapToTickEnabled="True"
+                            Margin="0,6,0,0"/>
+                    <TextBlock x:Name="FontSizeValueText" Foreground="#666" Margin="0,4,0,0"
+                               Text="Selected size: 22"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <Button Content="Build Multicast" Width="140" Height="30" Click="BuildMulticastButton_Click"/>
+                        <Button Content="Invoke Multicast" Width="140" Height="30" Margin="10,0,0,0" Click="InvokeMulticastButton_Click"/>
+                        <Button Content="Reset UI" Width="100" Height="30" Margin="10,0,0,0" Click="ResetUiButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
