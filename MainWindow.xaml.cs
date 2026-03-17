@@ -13,26 +13,29 @@ namespace lab4
     {
         delegate double MathOperation(double a);
 
-        delegate bool Comparer(double a, double b);
+        delegate bool Comparer<T>(T a, T b);
 
         static double Square(double a) => a * a;
         static double SquareRoot(double a) => Math.Sqrt(a);
         static double Reciprocal(double a) => 1 / a;
 
-        private static void BubbleSort(double[] arr, Comparer compare)
+        private static void BubbleSort<T>(T[] arr, Comparer<T> compare)
         {
             for (int i = 0; i < arr.Length - 1; i++)
                 for (int j = 0; j < arr.Length - i - 1; j++)
                     if (compare(arr[j], arr[j + 1]))
                     {
-                        double temp = arr[j];
+                        T temp = arr[j];
                         arr[j] = arr[j + 1];
                         arr[j + 1] = temp;
                     }
         }
 
-        private bool AscendingComparer(double a, double b) => a > b;
-        private bool DescendingComparer(double a, double b) => a < b;
+        private bool AscendingComparer<T>(T a, T b) where T : IComparable<T>
+            => a.CompareTo(b) > 0;
+
+        private bool DescendingComparer<T>(T a, T b) where T : IComparable<T>
+            => a.CompareTo(b) < 0;
 
         private MathOperation operation;
 
@@ -68,6 +71,32 @@ namespace lab4
         {
             OutputTextBox.Clear();
 
+            var ascending = (AscRadio.IsChecked == true);
+
+            if (SortAsStringRadio.IsChecked == true)
+            {
+                var items = InputTextBox.Text
+                    .Split(new[] { ',', ';', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                    .ToArray();
+
+                if (items.Length == 0)
+                {
+                    ResultText.Text = "Enter one or more strings to sort.";
+                    return;
+                }
+
+                Comparer<string> comparer = ascending
+                    ? (Comparer<string>)AscendingComparer<string>
+                    : (Comparer<string>)DescendingComparer<string>;
+
+                BubbleSort(items, comparer);
+
+                OutputTextBox.Text = string.Join(Environment.NewLine, items);
+                ResultText.Text = ascending ? "Sorted strings ascending." : "Sorted strings descending.";
+                return;
+            }
+
+            // else sort numbers
             if (!TryParseDoubles(InputTextBox.Text, out var values, out var error))
             {
                 ResultText.Text = error;
@@ -76,14 +105,14 @@ namespace lab4
 
             var arr = values.ToArray();
 
-            Comparer comparer = (AscRadio.IsChecked == true)
-                ? new Comparer(AscendingComparer)
-                : new Comparer(DescendingComparer);
+            Comparer<double> numComparer = ascending
+                ? (Comparer<double>)AscendingComparer<double>
+                : (Comparer<double>)DescendingComparer<double>;
 
-            BubbleSort(arr, comparer);
+            BubbleSort(arr, numComparer);
 
             OutputTextBox.Text = string.Join(Environment.NewLine, arr.Select(v => v.ToString("G", CultureInfo.InvariantCulture)));
-            ResultText.Text = (AscRadio.IsChecked == true) ? "Sorted ascending." : "Sorted descending.";
+            ResultText.Text = ascending ? "Sorted numbers ascending." : "Sorted numbers descending.";
         }
 
         private void CaptureDefaultUi()

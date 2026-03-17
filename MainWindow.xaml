@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:lab4"
         mc:Ignorable="d"
-        Title="Collection Processing" Height="712" Width="1106"
+        Title="Collection Processing" Height="745" Width="1106"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -102,84 +102,124 @@
             </Grid>
         </Border>
 
-        <!-- Multicast Delegate UI Styling Test -->
+        <!-- Bottom panel: Sorting | Styling test | Background/Label -->
         <Border Grid.Row="6" Padding="12" BorderBrush="#DDD" BorderThickness="1" CornerRadius="6">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1.2*"/>
                     <ColumnDefinition Width="12"/>
-                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="1.4*"/>
                     <ColumnDefinition Width="12"/>
-                    <ColumnDefinition Width="1.6*"/>
+                    <ColumnDefinition Width="1.8*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Choose which methods are in the multicast list -->
+                <!-- 1) Sorting (left) -->
                 <StackPanel Grid.Column="0">
-                    <TextBlock FontWeight="SemiBold" Text="UI Styling Test (Multicast Delegate)"/>
+                    <TextBlock FontWeight="SemiBold" Text="Sorting"/>
+
                     <TextBlock Foreground="#666" Margin="0,2,0,10"
-                               Text="Select methods to include, then build + invoke."/>
-                    <CheckBox x:Name="BgMethodCheckBox" Content="Change background color" IsChecked="True"/>
-                    <CheckBox x:Name="FgMethodCheckBox" Content="Change label (ResultText) font color" IsChecked="True" Margin="0,6,0,0"/>
-                    <CheckBox x:Name="SizeMethodCheckBox" Content="Change label (ResultText) font size" IsChecked="True" Margin="0,6,0,0"/>
+                               Text="Sort the InputTextBox as numbers or strings."/>
+
+                    <TextBlock FontWeight="SemiBold" Margin="0,0,0,6" Text="Sort as"/>
+                    <RadioButton x:Name="SortAsNumberRadio"
+                                 Content="Numbers"
+                                 GroupName="SortAs"
+                                 IsChecked="True"/>
+                    <RadioButton x:Name="SortAsStringRadio"
+                                 Content="Strings"
+                                 GroupName="SortAs"
+                                 Margin="0,6,0,0"/>
+
+                    <TextBlock FontWeight="SemiBold" Margin="0,12,0,6" Text="Order"/>
+                    <RadioButton x:Name="AscRadio"
+                                 Content="Ascending"
+                                 GroupName="SortOrder"
+                                 IsChecked="True"/>
+                    <RadioButton x:Name="DescRadio"
+                                 Content="Descending"
+                                 GroupName="SortOrder"
+                                 Margin="0,6,0,0"/>
+
+                    <Button Content="Sort Input"
+                            Margin="0,12,0,0"
+                            Height="30"
+                            Click="SortInputButton_Click"/>
                 </StackPanel>
 
-                <!-- Background picker -->
+                <!-- 2) Styling test (middle) -->
                 <StackPanel Grid.Column="2">
+                    <TextBlock FontWeight="SemiBold" Text="UI Styling Test (Multicast)"/>
+                    <TextBlock Foreground="#666" Margin="0,2,0,10"
+                               Text="Choose methods included in the invocation list."/>
+
+                    <CheckBox x:Name="BgMethodCheckBox"
+                              Content="Change background color"
+                              IsChecked="True"/>
+                    <CheckBox x:Name="FgMethodCheckBox"
+                              Content="Change label (ResultText) font color"
+                              IsChecked="True"
+                              Margin="0,6,0,0"/>
+                    <CheckBox x:Name="SizeMethodCheckBox"
+                              Content="Change label (ResultText) font size"
+                              IsChecked="True"
+                              Margin="0,6,0,0"/>
+
+                    <Button Content="Build Multicast"
+                            Margin="0,12,0,0"
+                            Height="30"
+                            Click="BuildMulticastButton_Click"/>
+
+                    <Button Content="Invoke Multicast"
+                            Margin="0,8,0,0"
+                            Height="30"
+                            Click="InvokeMulticastButton_Click"/>
+
+                    <Button Content="Reset UI"
+                            Margin="0,8,0,0"
+                            Height="30"
+                            Click="ResetUiButton_Click"/>
+                </StackPanel>
+
+                <!-- 3) Background + label settings (right) -->
+                <StackPanel Grid.Column="4">
+                    <TextBlock FontWeight="SemiBold" Text="Background / Label Settings"/>
+                    <TextBlock Foreground="#666" Margin="0,2,0,10"
+                               Text="Used by the multicast style methods."/>
+
                     <TextBlock FontWeight="SemiBold" Text="Background color"/>
-                    <ComboBox x:Name="BackgroundColorBox" Margin="0,6,0,0" SelectedIndex="0">
+                    <ComboBox x:Name="BackgroundColorBox"
+                              Margin="0,6,0,0"
+                              SelectedIndex="0">
                         <ComboBoxItem Content="Dark"/>
                         <ComboBoxItem Content="Light"/>
                         <ComboBoxItem Content="Blue"/>
                         <ComboBoxItem Content="Green"/>
                     </ComboBox>
-                    <!-- Sorting (delegate-based comparer) -->
-                    <Separator Margin="0,14,0,10"/>
-                    <TextBlock FontWeight="SemiBold" Text="Sorting"/>
 
-                    <StackPanel Margin="0,6,0,0">
-                        <RadioButton x:Name="AscRadio"
-                         Content="Ascending"
-                         GroupName="SortOrder"
-                         IsChecked="True"/>
-                        <RadioButton x:Name="DescRadio"
-                         Content="Descending"
-                         GroupName="SortOrder"
-                         Margin="0,6,0,0"/>
-                    </StackPanel>
-
-                    <Button Content="Sort Input"
-                        Margin="0,10,0,0"
-                        Height="30"
-                        Click="SortInputButton_Click"/>
-                </StackPanel>
-
-                <!-- Foreground picker + size slider -->
-                <StackPanel Grid.Column="4">
-                    <TextBlock FontWeight="SemiBold" Text="Label style (ResultText)"/>
-                    <TextBlock Margin="0,6,0,0" Text="Font color"/>
-                    <ComboBox x:Name="FontColorBox" Margin="0,6,0,0" SelectedIndex="0">
+                    <TextBlock FontWeight="SemiBold" Margin="0,12,0,0" Text="Label font color"/>
+                    <ComboBox x:Name="FontColorBox"
+                              Margin="0,6,0,0"
+                              SelectedIndex="0">
                         <ComboBoxItem Content="Orange"/>
                         <ComboBoxItem Content="White"/>
                         <ComboBoxItem Content="Black"/>
                         <ComboBoxItem Content="Red"/>
                     </ComboBox>
 
-                    <TextBlock Margin="0,10,0,0" Text="Font size"/>
-                    <Slider x:Name="FontSizeSlider" Minimum="10" Maximum="40" Value="22"
-                            TickFrequency="2" IsSnapToTickEnabled="True"
+                    <TextBlock FontWeight="SemiBold" Margin="0,12,0,0" Text="Label font size"/>
+                    <Slider x:Name="FontSizeSlider"
+                            Minimum="10"
+                            Maximum="40"
+                            Value="22"
+                            TickFrequency="2"
+                            IsSnapToTickEnabled="True"
                             Margin="0,6,0,0"/>
-                    <TextBlock x:Name="FontSizeValueText" Foreground="#666" Margin="0,4,0,0"
+                    <TextBlock x:Name="FontSizeValueText"
+                               Foreground="#666"
+                               Margin="0,4,0,0"
                                Text="Selected size: 22"/>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                        <Button Content="Build Multicast" Width="140" Height="30" Click="BuildMulticastButton_Click"/>
-                        <Button Content="Invoke Multicast" Width="140" Height="30" Margin="10,0,0,0" Click="InvokeMulticastButton_Click"/>
-                        <Button Content="Reset UI" Width="100" Height="30" Margin="10,0,0,0" Click="ResetUiButton_Click"/>
-                    </StackPanel>
                 </StackPanel>
-                
             </Grid>
-            
         </Border>
     </Grid>
 </Window>
