@@ -38,7 +38,9 @@ namespace lab4
             if (OperationBox.SelectedItem == null)
                 return;
 
-            string selected = OperationBox.SelectedItem.ToString();
+            var item = (ComboBoxItem)OperationBox.SelectedItem;
+            string selected = item.Content.ToString();
+
 
             switch (selected)
             {
@@ -52,7 +54,31 @@ namespace lab4
                     operation = Reciprocal;
                     break;
             }
-            ResultText.Text = "Selected: " + OperationBox.SelectedItem;
+            ResultText.Text = "Selected: " + selected;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (operation == null)
+            {
+                ResultText.Text = "Select operation first!";
+                return;
+            }
+
+            if (!double.TryParse(Txtbox1.Text, out double value))
+            {
+                ResultText.Text = "Invalid number!";
+                return;
+            }
+
+            if (value == 0 && operation == Reciprocal)
+            {
+                ResultText.Text = "Cannot divide by zero!";
+                return;
+            }
+
+            double result = operation(value);
+            ResultText.Text = "Equals: " + result;
         }
     }
 }
